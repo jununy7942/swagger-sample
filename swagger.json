@@ -58,6 +58,16 @@
               }
             }
           },
+          "201" : {
+            "description" : "Expected response to a valid request",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ConnInfo"
+                }
+              }
+            }
+          },
           "404" : {
             "description" : "Invalid ServiceName value",
             "content" : { }
