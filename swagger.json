@@ -1,0 +1,102 @@
+{
+  "openapi" : "3.0.0",
+  "info" : {
+    "title" : "Sample",
+    "version" : "1.0.0",
+    "description" : "Service 등록하기 위한 Framework"
+  },
+  "tags" : [ {
+    "name" : "initService",
+    "description" : "Init Service"
+  } ],
+  "paths" : {
+    "/init/{serviceName}/{index}" : {
+      "summary" : "Init Service",
+      "description" : "Init Service",
+      "put" : {
+        "summary" : "Create a new Service",
+        "description" : "Create a new Service",
+        "operationId" : "CreateService",
+        "tags" : [ "initService" ],
+        "parameters" : [ {
+          "name" : "serviceName",
+          "in" : "path",
+          "required" : true,
+          "description" : "Service Name to register",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "index",
+          "in" : "path",
+          "required" : true,
+          "description" : "Service Index in pod to register",
+          "schema" : {
+            "type" : "integer",
+            "minimum" : 0,
+            "maximum" : 32,
+            "default" : 0
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ConnInfo"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Expected response to a valid request",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ConnInfo"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Invalid ServiceName value",
+            "content" : { }
+          },
+          "default" : {
+            "description" : "Default error sample response"
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "ConnInfo" : {
+        "description" : "Information ipAddress and port for service",
+        "required" : [ "serviceName", "index" ],
+        "properties" : {
+          "serviceName" : {
+            "type" : "string"
+          },
+          "index" : {
+            "type" : "integer",
+            "minimum" : 0,
+            "maximum" : 32,
+            "default" : 0
+          },
+          "ipAddr" : {
+            "type" : "string",
+            "pattern" : "^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$",
+            "example" : "192.168.100.11"
+          },
+          "protocol" : {
+            "description" : "communication protocol",
+            "type" : "string",
+            "enum" : [ "tcp", "udp", "sctp", "http" ],
+            "default" : "tcp"
+          }
+        }
+      }
+    }
+  }
+}
