@@ -1,117 +1,76 @@
 {
   "openapi" : "3.0.0",
   "info" : {
-    "title" : "Simple Inventory API",
-    "description" : "This is a simple API",
-    "contact" : {
-      "email" : "you@your-company.com"
-    },
-    "license" : {
-      "name" : "Apache 2.0",
-      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
-    },
+    "title" : "Sample",
+    "description" : "Service 등록하기 위한 Framework",
     "version" : "1.0.0"
   },
   "servers" : [ {
-    "url" : "https://virtserver.swaggerhub.com/jununy7942/sample/1.0.0",
-    "description" : "SwaggerHub API Auto Mocking"
-  }, {
-    "url" : "https://virtserver.swaggerhub.com/jununy7942/ipcm/1.0.0",
-    "description" : "SwaggerHub API Auto Mocking"
+    "url" : "/"
   } ],
   "tags" : [ {
-    "name" : "admins",
-    "description" : "Secured Admin-only calls"
-  }, {
-    "name" : "developers",
-    "description" : "Operations available to regular developers"
+    "name" : "initService",
+    "description" : "Init Service"
   } ],
   "paths" : {
-    "/inventory" : {
-      "get" : {
-        "tags" : [ "developers" ],
-        "summary" : "searches inventory",
-        "description" : "By passing in the appropriate options, you can search for\navailable inventory in the system\n",
-        "operationId" : "searchInventory",
+    "/init/{serviceName}/{index}" : {
+      "summary" : "Init Service",
+      "description" : "Init Service",
+      "put" : {
+        "tags" : [ "initService" ],
+        "summary" : "Create a new Service",
+        "description" : "Create a new Service",
+        "operationId" : "CreateService",
         "parameters" : [ {
-          "name" : "searchString",
-          "in" : "query",
-          "description" : "pass an optional search string for looking up inventory",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
+          "name" : "serviceName",
+          "in" : "path",
+          "description" : "Service Name to register",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
             "type" : "string"
           }
         }, {
-          "name" : "skip",
-          "in" : "query",
-          "description" : "number of records to skip for pagination",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
+          "name" : "index",
+          "in" : "path",
+          "description" : "Service Index in pod to register",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
+            "maximum" : 32,
             "minimum" : 0,
             "type" : "integer",
-            "format" : "int32"
-          }
-        }, {
-          "name" : "limit",
-          "in" : "query",
-          "description" : "maximum number of records to return",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "maximum" : 50,
-            "minimum" : 0,
-            "type" : "integer",
-            "format" : "int32"
+            "default" : 0
           }
         } ],
-        "responses" : {
-          "200" : {
-            "description" : "search results matching criteria",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/InventoryItem"
-                  }
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "bad input parameter"
-          }
-        }
-      },
-      "post" : {
-        "tags" : [ "admins" ],
-        "summary" : "adds an inventory item",
-        "description" : "Adds an item to the system",
-        "operationId" : "addInventory",
         "requestBody" : {
-          "description" : "Inventory item to add",
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/InventoryItem"
+                "$ref" : "#/components/schemas/ConnInfo"
               }
             }
           }
         },
         "responses" : {
-          "201" : {
-            "description" : "item created"
+          "200" : {
+            "description" : "Expected response to a valid request",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ConnInfo"
+                }
+              }
+            }
           },
-          "400" : {
-            "description" : "invalid input, object invalid"
+          "404" : {
+            "description" : "Invalid ServiceName value",
+            "content" : { }
           },
-          "409" : {
-            "description" : "an existing item already exists"
+          "default" : {
+            "description" : "Default error sample response"
           }
         }
       }
@@ -119,47 +78,31 @@
   },
   "components" : {
     "schemas" : {
-      "InventoryItem" : {
-        "required" : [ "id", "manufacturer", "name", "releaseDate" ],
-        "type" : "object",
+      "ConnInfo" : {
+        "required" : [ "index", "serviceName" ],
         "properties" : {
-          "id" : {
-            "type" : "string",
-            "format" : "uuid",
-            "example" : "d290f1ee-6c54-4b01-90e6-d701748f0851"
+          "serviceName" : {
+            "type" : "string"
           },
-          "name" : {
-            "type" : "string",
-            "example" : "Widget Adapter"
+          "index" : {
+            "maximum" : 32,
+            "minimum" : 0,
+            "type" : "integer",
+            "default" : 0
           },
-          "releaseDate" : {
+          "ipAddr" : {
+            "pattern" : "^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$",
             "type" : "string",
-            "format" : "date-time",
-            "example" : "2016-08-29T09:12:33.001Z"
+            "example" : "192.168.100.11"
           },
-          "manufacturer" : {
-            "$ref" : "#/components/schemas/Manufacturer"
+          "protocol" : {
+            "type" : "string",
+            "description" : "communication protocol",
+            "enum" : [ "tcp", "udp", "sctp", "http" ],
+            "default" : "tcp"
           }
-        }
-      },
-      "Manufacturer" : {
-        "required" : [ "name" ],
-        "type" : "object",
-        "properties" : {
-          "name" : {
-            "type" : "string",
-            "example" : "ACME Corporation"
-          },
-          "homePage" : {
-            "type" : "string",
-            "format" : "url",
-            "example" : "https://www.acme-corp.com"
-          },
-          "phone" : {
-            "type" : "string",
-            "example" : "408-867-5309"
-          }
-        }
+        },
+        "description" : "Information ipAddress and port for service"
       }
     }
   }
